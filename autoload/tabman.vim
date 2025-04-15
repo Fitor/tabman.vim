@@ -44,6 +44,7 @@ let s:hlp =  [[
 	\ '" m: move tab under the',
 	\ '"    cursor to after',
 	\ '"    another tab',
+	\ '" r: rename tab name.',
 	\ '" ----------------------',
 	\ '" <tab>,',
 	\ '" <right>:',
@@ -61,9 +62,9 @@ let s:hlp =  [[
 	\ '" h: move cursor to the',
 	\ '"    previous Tab# line',
 	\ '" ----------------------',
-	\ '" r: fix TabMan window',
+	\ '" R: fix TabMan window',
 	\ '" ----------------------',
-	\ '" <cr>, e, x, b, o, O,',
+	\ '" <cr>, e, x, b, o, O, r',
 	\ '" m:',
 	\ '"    accept line number',
 	\ '"    as [count]',
@@ -71,19 +72,20 @@ let s:hlp =  [[
 	\ ], ['" Press ? for help']]
 
 let [s:maps, s:name, s:lcmap] = [{
-	\ 'ManSelect()':  ['<cr>', 'e', '<2-LeftMouse>'],
-	\ 'ManDelete()':  ['x'],
-	\ 'ManDelete(1)': ['b'],
-	\ 'ManNew()':     ['t'],
-	\ 'ManOnly()':    ['o'],
-	\ 'ManOnly(1)':   ['O'],
-	\ 'ManJump(1)':   ['l', '<down>'],
-	\ 'ManJump(-1)':  ['h', '<up>'],
-	\ 'ManMove()':    ['m'],
-	\ 'ManTab(1)':    ['<tab>', '<right>'],
-	\ 'ManTab(-1)':   ['<s-tab>', '<left>'],
-	\ 'ManRestore()': ['r'],
-	\ 'ManHelp()':    ['?'],
+	\ 'ManSelect()':    ['<cr>', 'e', '<2-LeftMouse>'],
+	\ 'ManDelete()':    ['x'],
+	\ 'ManDelete(1)':   ['b'],
+	\ 'ManNew()':       ['t'],
+	\ 'ManOnly()':      ['o'],
+	\ 'ManOnly(1)':     ['O'],
+	\ 'ManJump(1)':     ['l', '<down>'],
+	\ 'ManJump(-1)':    ['h', '<up>'],
+	\ 'ManMove()':      ['m'],
+	\ 'ManTab(1)':      ['<tab>', '<right>'],
+	\ 'ManTab(-1)':     ['<s-tab>', '<left>'],
+	\ 'ManTabRename()': ['r'],
+	\ 'ManRestore()':   ['R'],
+	\ 'ManHelp()':      ['?'],
 	\ }, 'TabManager', 'nn <buffer> <silent>']
 "}}}
 " Open & Close {{{
@@ -118,6 +120,23 @@ endf
 " TMan Actions {{{
 fu! s:ManTab(dir)
 	exe a:dir > 0 ? 'tabn' : 'tabp'
+endf
+
+fu! s:ManTabRename()
+	let lnr = v:prevcount ? v:prevcount : line('.')
+	if v:prevcount
+		exe 'keepj' v:prevcount
+	en
+	if !has_key(s:btlines, lnr)
+		retu
+	en
+	let eval = s:btlines[lnr]
+  let id = matchstr(eval, '\d\+$')
+
+  let name = input("Input name:")
+
+  call settabvar(id, 'cvname', name)
+	cal s:ManUpdate(1)
 endf
 
 fu! s:ManHelp()
