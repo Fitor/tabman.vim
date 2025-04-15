@@ -282,9 +282,9 @@ fu! s:render()
 		for val in values(buftabs[key])
 			let tlen += len(val) - 2
 		endfo
-		cal setline(lnr, ['', 'Tab #'.(key == currtab ? key.'*' : key)])
+		cal setline(lnr, ['', 'Tab #'.(key == currtab ? key.'*' : key), gettabvar(key, 'cvname')])
 		cal extend(s:btlines, { lnr + 1 : 't'.key })
-		let lnr += 2
+		let lnr += 3
 		for each in keys(buftabs[key]) | for winnr in buftabs[key][each][1:]
 			cal setline(lnr, [(id == tlen ? '`' : '|')."-".buftabs[key][each][0]])
 			cal extend(s:btlines, { lnr : 't'.key.'b'.each.'w'.winnr })
