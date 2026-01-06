@@ -429,6 +429,10 @@ fu! tabman#toggle()
 	cal call(s:bufwinnr() ? 's:Close' : 's:Open', [])
 endf
 
+fu! tabman#close()
+	cal s:Close()
+endf
+
 au TabEnter,CursorHold * cal s:ManUpdate(2)
 "}}}
 
